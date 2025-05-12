@@ -12,7 +12,9 @@ Systemd provides several advantages over traditional init systems:
 - **cgroups Integration**: Allows resource limitations on services to prevent system overload.
 - **Socket-Based Activation**: Enables faster and more reliable service startup.
 
-## Basic Commands
+## Commands
+
+### Basic Commands
 ```bash
 # Check systemd version
 systemctl --version
@@ -34,7 +36,7 @@ sudo systemctl disable <service-name>
 journalctl -u <service-name>
 ```
 
-## Status Command
+### Status Command
 This **Systemd service status** output provides detailed information about the service.
 - Loaded: Indicates that the **service definition file** (`httpd.service`) has been successfully **loaded** from `/usr/lib/systemd/system/`.
 - Active: Indicates the running status
@@ -73,7 +75,9 @@ If you only start <service-name>, it will run now, but after a reboot, it won’
 \
 If you enable <service-name>, it will start every time the system boots, even if manually stopped. (eanble will **create the symlink** pointing to actual service, while **removes the symlink**)
 
-## Service Types
+## Services
+
+### Service Types
 Systemd operates using **units**, which define various system resources:
 - **Service Units (`.service`)**:
   - Manage system services.
@@ -156,7 +160,7 @@ Systemd operates using **units**, which define various system resources:
     WantedBy=sockets.target
     ```
 
-## Serice File (.service)
+### Serice File (.service)
 A Systemd service file (.service) consists of three primary **sections**.
 - `[Unit]` → Defines **dependencies** and metadata.
 - `[Service]` → Controls **execution behavior**.
@@ -181,7 +185,7 @@ WorkingDirectory=/var/www
 WantedBy=multi-user.target
 Alias=webserver.service
 ```
-### [Unit] Section
+#### [Unit] Section
 Defines **metadata** and general behavior of the service.
 - **`Description=`** → A short summary of the service.
 - **`After=`** → Specifies services that should start **before** this service.
@@ -189,7 +193,7 @@ Defines **metadata** and general behavior of the service.
 - **`Wants=`** → Similar to `Requires`, but failures don’t stop this service.
 - **`Conflicts=`** → Defines services that should not run alongside this service.
 - **`PartOf=`** → Groups the service under a larger unit, ensuring that if the parent unit **stops**, this service stops as well. However, starting httpd.service does NOT automatically start after parant !!!
-### [Service] Section
+#### [Service] Section
 Defines **how the service runs and its execution parameters**.
 - **`ExecStart=`** → Command to start the service.
 - **`ExecStop=`** → Command to stop the service.
@@ -214,6 +218,7 @@ Defines **how the service runs and its execution parameters**.
 - **`User=`** → Specifies the user under which the service runs.
 - **`Group=`** → Defines the service’s group permissions.
 - **`WorkingDirectory=`** → Sets the working directory of the process.
+\
 Additional commands
 - **`RemainAfterExit=yes*`* → Command to ensures Systemd considers it "active", even after the command finishes.
   - Often used for initialization tasks.
@@ -223,7 +228,21 @@ Additional commands
   - Useful for **logging, notifications, or dependent actions** after the service starts.
 - **`ExecStopPost=`** → Command(s) to run **after `ExecStop`** stops the service.
   - Helps **clean up resources or execute final tasks** after shutdown.
-### [Install] Section
+\
+Advance commands for priority / policy
+- Nice:
+  - Sets the nice value for the service. The value ranges from -20 (highest priority) to 19 (lowest priority).
+- CPUSchedulingPolicy:
+  - Sets the CPU scheduling policy. Common values are other, fifo, and rr (round-robin).
+- CPUSchedulingPriority:
+  - The priority range depends on the scheduling policy being used. For real-time policies like FIFO (First In, First Out) and RR (Round Robin), the range is usually from 1 (lowest) to 99 (highest).
+```bash
+[Service]
+Nice=-10
+CPUSchedulingPolicy=rr
+CPUSchedulingPriority=50
+```
+#### [Install] Section
 Defines the **startup behavior** when the service is enabled.
 - **`WantedBy=`** → Specifies the target group that enables the service (e.g., `multi-user.target`).
 - **`Alias=`** → Creates an **alternative name** for the service.
@@ -247,4 +266,18 @@ $ systemctl daemon-reload
 
 # restart
 $ systemctl restart <service name>
+```
+
+#### Where are Service Files used to locate
+The common places:
+```bash
+/etc/systemd/system/*
+/run/systemd/system/*
+/lib/systemd/system/*
+...
+```
+For a specific service, to see what systemd is reading
+```bash
+systemctl status <service name>
+systemctl show <service name>
 ```
