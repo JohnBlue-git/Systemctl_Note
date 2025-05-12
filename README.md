@@ -316,3 +316,34 @@ reference: https://linux.how2shout.com/howt-to-analyze-linux-sysytem-boot-time-w
 \
 reference: https://drive.google.com/drive/folders/1mfM2r8PRItuyttJ438-P3BARXYZClwQ7
 
+## Ccommands (service) (optional)
+The `service` command and `systemctl` are both used to manage services on Linux systems, but they have key differences in functionality and usage.
+```console
+service <service-name> start  # Starts the service
+service <service-name> stop   # Stops the service
+service <service-name> restart # Restarts the service
+service <service-name> status  # Checks the status of the service
+```
+This command is mainly used on older Linux distributions that still rely on SysV init scripts located in `/etc/init.d/`.
+
+### **Comparison: `service` vs `systemctl`**
+| Feature                 | `service` | `systemctl` |
+|-------------------------|-----------|-------------|
+| Init system             | SysV init | systemd     |
+| Start/Stop services     | Yes       | Yes         |
+| Restart services        | Yes       | Yes         |
+| Check service status    | Yes       | Yes (more detailed) |
+| Enable/Disable startup  | No        | Yes         |
+| Handles dependencies    | No        | Yes         |
+| Logging integration     | Limited   | Integrated with `journald` |
+
+### **Key Differences**
+1. **Scope**: `service` only works with SysV init scripts, while `systemctl` manages services under systemd, including handling dependencies and monitoring logs.
+2. **Startup Management**: `systemctl` allows enabling and disabling services on boot, while `service` does not.
+3. **Logging**: `systemctl` integrates with `journald`, providing richer logs compared to `service`.
+
+### **Choose Which One?**
+- If your system uses **systemd**, prefer `systemctl` for better service control and logging.
+- If your system relies on **SysV init**, use `service` as `systemctl` may not be available.
+- On some **hybrid systems**, `service` commands are redirected to `systemctl`, making them interchangeable.
+
