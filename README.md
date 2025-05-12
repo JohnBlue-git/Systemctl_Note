@@ -258,16 +258,6 @@ Here are some common targets:
 - **`network.target`** → Ensures the service starts **after networking is available**.
 - **`default.target`** → The default boot target.
 
-## If Service Files have changed, please re-load and re-start to apply the change
-After re-load, systemd will check which have been modified then restart the specific service without affecting others.
-```bash
-# reload
-$ systemctl daemon-reload
-
-# restart
-$ systemctl restart <service name>
-```
-
 #### Where are Service Files used to locate
 The common places:
 ```bash
@@ -281,3 +271,48 @@ For a specific service, to see what systemd is reading
 systemctl status <service name>
 systemctl show <service name>
 ```
+
+#### If Service Files have changed, please re-load and re-start to apply the change
+After re-load, systemd will check which have been modified then restart the specific service without affecting others.
+```bash
+# reload
+$ systemctl daemon-reload
+
+# restart
+$ systemctl restart <service name>
+```
+
+## How to analyze
+
+### Command to Check the Dependencies
+```bash
+# show
+# the command will show contents in .service file
+systemctl show network.target -p Wants -p Requires -p Before -p After
+
+# list-dependencies
+# the following command will provide a hierarchical view of units
+systemctl list-dependencies --before network.target
+systemctl list-dependencies --after network.target
+```
+### Inspect the Unit Files
+```bash
+[Unit]
+Description=Network
+Documentation=man:systemd.special(7)
+Documentation=https://systemd.io/NETWORK_ONLINE
+After=network-pre.target
+RefuseManualStart=yes
+```
+### Use systemd-analyze blame
+To analyze which services take the longest time to start during boot. It lists all systemd units in descending order based on their startup time.
+```bash
+# but some smaller OS does not support this
+sudo apt update
+sudo apt install systemd
+systemd-analyze blame
+```
+reference: https://linux.how2shout.com/howt-to-analyze-linux-sysytem-boot-time-with-systemd/#google_vignette
+\
+reference: https://drive.google.com/drive/folders/1mfM2r8PRItuyttJ438-P3BARXYZClwQ7
+
