@@ -1,4 +1,4 @@
-## What is **systemd** and **systemctl**
+## What is **Systemd** and **systemctl**
 Systemd is an **init system** and a suite of system management tools that has largely replaced **SysVinit** on Linux distributions. It manages the startup and shutdown of the operating system and its services, offering a more robust and efficient approach than its predecessor.
 \
 Systemd is controlled using the `systemctl` command.
@@ -135,18 +135,17 @@ Systemd operates using **units**, which define various system resources:
   # Systemd **starts `myapp.service` only when the socket receives a connection**.
   [Socket]
   ListenStream=<service path>/<service name>.sock
-  
-  ...
+  # or ListenStream=8080
   ```
-  - When to Use Which ?
+  - When to use which **ListenStream=** ?
     - **Use `ListenStream=<service path>/<service name>.sock`** when **only local processes** need to communicate (e.g., a web server talking to a backend).
     - **Use `ListenStream=8080`** when the service **must be accessible over the network**.
     - Compare Table
-    | **Method**              | **Scope**              | **Speed** | **Security** | **Use Case** |
-    |----------------------|------------------|------------|-------------|-------------|
-    | `ListenStream=/run/myapp.sock` | Local system only | Fast | File permissions | IPC between local services |
-    | `ListenStream=8080` | Local & remote | Moderate | Requires firewall | Public-facing services |
-  - Using a Separate bmcweb.socket
+      | **Method**              | **Scope**              | **Speed** | **Security** | **Use Case** |
+      |----------------------|------------------|------------|-------------|-------------|
+      | `ListenStream=/run/myapp.sock` | Local system only | Fast | File permissions | IPC between local services |
+      | `ListenStream=8080` | Local & remote | Moderate | Requires firewall | Public-facing services |
+  - Why use separate bmcweb.socket
     - Socket Activation: Systemd listens on port 443 and only starts bmcweb.service when a connection arrives. This reduces resource usage when idle.
     - Automatic Restart: If bmcweb.service crashes, the socket remains open, and systemd can restart the service when needed.
     - Parallel Handling: With ReusePort=true, multiple instances of bmcweb.service can handle requests efficiently.
@@ -261,12 +260,16 @@ Here are some common targets:
 #### Where are Service Files used to locate
 The common places:
 ```bash
-/etc/systemd/system/*
-/run/systemd/system/*
-/lib/systemd/system/*
+# system wide (could be in one of them)
+/etc/systemd/system
+/run/systemd/system
+/lib/systemd/system
 ...
+
+# user wide
+~/.config/systemd/user
 ```
-For a specific service, to see what systemd is reading
+For a specific service, we can use status or show to see where systemd loads the service
 ```bash
 systemctl status <service name>
 systemctl show <service name>

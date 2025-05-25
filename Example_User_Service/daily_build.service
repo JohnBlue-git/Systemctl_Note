@@ -1,0 +1,9 @@
+[Unit]
+Description=Run daily task script
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/mnt/ssd1/buildfarm/yujen.lan
+ExecStart=/mnt/ssd1/buildfarm/yujen.lan/daily_build.sh
+Environment=PATH=/home/yujen.lan/bin:/usr/sbin:/usr/bin:/sbin:/bin
