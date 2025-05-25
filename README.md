@@ -1,4 +1,4 @@
-## What is Systemd and systemctl
+## What is **systemd** and **systemctl**
 Systemd is an **init system** and a suite of system management tools that has largely replaced **SysVinit** on Linux distributions. It manages the startup and shutdown of the operating system and its services, offering a more robust and efficient approach than its predecessor.
 \
 Systemd is controlled using the `systemctl` command.
@@ -12,7 +12,7 @@ Systemd provides several advantages over traditional init systems:
 - **cgroups Integration**: Allows resource limitations on services to prevent system overload.
 - **Socket-Based Activation**: Enables faster and more reliable service startup.
 
-## Commands
+## Commands **systemctl**
 
 ### Basic Commands
 ```bash
@@ -36,7 +36,7 @@ sudo systemctl disable <service-name>
 journalctl -u <service-name>
 ```
 
-### Status Command
+### Status command
 This **Systemd service status** output provides detailed information about the service.
 - Loaded: Indicates that the **service definition file** (`httpd.service`) has been successfully **loaded** from `/usr/lib/systemd/system/`.
 - Active: Indicates the running status
@@ -284,7 +284,7 @@ $ systemctl restart <service name>
 
 ## How to analyze
 
-### Command to Check the Dependencies
+### Command to check the dependencies
 ```bash
 # show
 # the command will show contents in .service file
@@ -295,7 +295,7 @@ systemctl show network.target -p Wants -p Requires -p Before -p After
 systemctl list-dependencies --before network.target
 systemctl list-dependencies --after network.target
 ```
-### Inspect the Unit Files
+### Inspect the unit files
 ```bash
 [Unit]
 Description=Network
@@ -304,7 +304,7 @@ Documentation=https://systemd.io/NETWORK_ONLINE
 After=network-pre.target
 RefuseManualStart=yes
 ```
-### Use systemd-analyze blame
+### Use **systemd-analyze blame**
 To analyze which services take the longest time to start during boot. It lists all systemd units in descending order based on their startup time.
 ```bash
 # but some smaller OS does not support this
@@ -316,7 +316,7 @@ reference: https://linux.how2shout.com/howt-to-analyze-linux-sysytem-boot-time-w
 \
 reference: https://drive.google.com/drive/folders/1mfM2r8PRItuyttJ438-P3BARXYZClwQ7
 
-## Ccommands (service) (optional)
+## (Optional) Commands **service**
 The `service` command and `systemctl` are both used to manage services on Linux systems, but they have key differences in functionality and usage.
 ```console
 service <service-name> start  # Starts the service
